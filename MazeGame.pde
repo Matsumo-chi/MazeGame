@@ -1,8 +1,10 @@
-Car car;
+Chara chara;
 Tile[] tiles =  new Tile[0];
 MapChip mp1;
 boolean showOneTime;
 int number;
+int point=0;
+int Key=0;
 
 class MapChip {
   //集合画像本体
@@ -15,7 +17,7 @@ class MapChip {
     mapChipArray=loadImage(file);
     mWidth=mapChipArray.width/Chip_w; //画像に含まれるマップチップの横並び数 
     mHeight=mapChipArray.height/Chip_h; //マップチップの縦の数 
-    mCount=mWidth * mHeight; //画像に含まれるマップチップの総数 
+    mCount=mWidth * mHeight; //画像に含まれるマップチップの総数
   }    
   //「番号」を与えて画像を得る
   //マップチップ総数を超えたらnullになる
@@ -35,20 +37,20 @@ class MapChip {
 // マップ元データ
 /*
 0=道
-1=壁
-2=
-*/
+ 1=壁
+ 2=
+ */
 int[][] mymap = {
 
   { 2, 1, 1, 1, 1, 1, 1, 1, 1, 2 }, 
-  { 2, 0, 20, 0, 0, 0, 0, 0, 0, 2}, 
-  { 2, 2, 0, 1, 1, 1, 0, 0, 0, 2 }, 
+  { 2, 0, 20, 0, 0, 0, 0, 23, 0, 2}, 
+  { 2, 1, 0, 1, 1, 1, 0, 0, 0, 2 }, 
   { 2, 0, 0, 2, 0, 2, 0, 2, 0, 2 }, 
   { 2, 0, 1, 1, 0, 1, 1, 1, 0, 2 }, 
   { 2, 0, 2, 0, 0, 0, 2, 0, 0, 2 }, 
-  { 2, 0, 2, 22, 2, 0, 2, 0, 2, 2 }, 
-  { 2, 0, 1, 1, 1, 0, 2, 0, 0, 2 }, 
-  { 2, 0, 0, 0, 0, 0, 2, 2, 0, 2 }, 
+  { 2, 0, 2, 22, 2, 0, 2, 0, 1, 2 }, 
+  { 2, 0, 1, 1, 1, 16, 2, 0, 0, 2 }, 
+  { 2, 0, 0, 0, 0, 0, 2, 2, 24, 2 }, 
   { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 
 };
@@ -71,7 +73,7 @@ void setup() {
   }
 
   // Create car object
-  car = new Car(64, 64, 64, 64, color(255, 255, 255), 64);
+  chara = new Chara(64, 64, 64, 64, 64);
 }
 
 void draw() {
@@ -91,7 +93,7 @@ void draw() {
   }
 
   // Display car
-  car.display(); 
+  chara.display(); 
 
   //デバック用
   fill(0);
@@ -100,27 +102,28 @@ void draw() {
   text("MapChip: "+number+" / "+mp1.mCount, 730, 70);
   PImage mapChip = mp1.getMapChip(number);  
   image(mapChip, 740, 80, 64, 64);//表示
-  
+  println(point);
+  println(Key);
 }
 
 void keyPressed() {
 
   if (keyCode == UP) { 
-    car.move("up");
+    chara.move("up");
   }
   if (keyCode == DOWN) { 
-    car.move("down");
+    chara.move("down");
   } 
   if (keyCode == LEFT) { 
-    car.move("left");
+    chara.move("left");
   } 
   if (keyCode == RIGHT) { 
-    car.move("right");
+    chara.move("right");
   }
 
 
-//デバック用
-  if (key == '-'){//-キーで前のマップチップ
+  //デバック用
+  if (key == '-') {//-キーで前のマップチップ
     if (--number<0) {
       number=mp1.mCount-1;
     }
@@ -129,39 +132,48 @@ void keyPressed() {
       number=0;
     }
   }
-  
-  
 }
 
-class Car {
+class Chara {
   float x, y, w, h;
-  color c;
   float s;
-
-  Car(float tempX, float tempY, float tempW, float tempH, color tempColor, float tempSpeed) {
+  int number;
+  Chara(float tempX, float tempY, float tempW, float tempH, float tempSpeed) {
     x = tempX;
     y = tempY;
     w = tempW;
     h = tempH;
-    c = tempColor;
     s = tempSpeed;
   }
-
-void display() {
-    fill(c);
-    noStroke();
-    ellipseMode(CORNER);
-    ellipse(x, y, w, h);
+  //charaの表示
+  void display() {
+    PImage mapChip = mp1.getMapChip(number);
+    number=30;//チップのキャラ番号 //<>//
+    image(mapChip, x, y, w, h);
+    number++; 
+    // ループ処理
+    if (number == 33) {
+      number = 30;
+    }
+   image(mapChip, x, y, w, h);
   }
 
-void move(String direction) {
+  void move(String direction) {
     if (keyPressed) {
       // 方向
       if (direction == "up") {
         for (int i = 0; i < tiles.length; i++) {
-          if ((car.x == tiles[i].x) && (car.y == tiles[i].y)) {
+          if ((chara.x == tiles[i].x) && (chara.y == tiles[i].y)) {
             if (tiles[i-10].v == 0 || tiles[i-10].v == 20) {
-              car.y = car.y - s;
+              chara.y = chara.y - s;
+              break;
+            } else if (tiles[i-10].v == 23) {
+              chara.y = chara.y - s;
+              point = 1;
+              break;
+            } else if (tiles[i-10].v == 24) {
+              chara.y = chara.y - s;
+              Key = 1;
               break;
             }
           }
@@ -169,9 +181,17 @@ void move(String direction) {
       }
       if (direction == "down") {
         for (int i = 0; i < tiles.length; i++) {
-          if ((car.x == tiles[i].x) && (car.y == tiles[i].y)) {
+          if ((chara.x == tiles[i].x) && (chara.y == tiles[i].y)) {
             if (tiles[i + 10].v == 0 || tiles[i+10].v == 20) {
-              car.y = car.y + s;
+              chara.y = chara.y + s;
+              break;
+            } else if (tiles[i+10].v == 23) {
+              chara.y = chara.y + s;
+              point = 1;
+              break;
+            } else if (tiles[i+10].v == 24) {
+              chara.y = chara.y + s;
+              Key = 1;
               break;
             }
           }
@@ -179,9 +199,17 @@ void move(String direction) {
       }
       if (direction == "left") {
         for (int i = 0; i < tiles.length; i++) {
-          if ((car.x == tiles[i].x) && (car.y == tiles[i].y)) {
+          if ((chara.x == tiles[i].x) && (chara.y == tiles[i].y)) {
             if (tiles[i-1].v == 0 || tiles[i-1].v == 20) {
-              car.x = car.x - s;
+              chara.x = chara.x - s;
+              break;
+            } else if (tiles[i-10].v == 23) {
+              chara.x = chara.x - s;
+              point = 1;
+              break;
+            } else if (tiles[i-10].v == 24) {
+              chara.x = chara.y - s;
+              Key = 1;
               break;
             }
           }
@@ -189,9 +217,17 @@ void move(String direction) {
       }
       if (direction == "right") {
         for (int i = 0; i < tiles.length; i++) {
-          if ((car.x == tiles[i].x) && (car.y == tiles[i].y)) {
+          if ((chara.x == tiles[i].x) && (chara.y == tiles[i].y)) {
             if (tiles[i+1].v == 0 || tiles[i+1].v == 20) {
-              car.x = car.x + s;
+              chara.x = chara.x + s;
+              break;
+            } else if (tiles[i+10].v == 23) {
+              chara.x = chara.x + s;
+              point = 1;
+              break;
+            } else if (tiles[i+10].v == 24) {
+              chara.x = chara.x + s;
+              Key = 1;
               break;
             }
           }
@@ -214,7 +250,7 @@ class Tile {
   }
 
   void display() {
-   PImage mapChip = mp1.getMapChip(number);
+    PImage mapChip = mp1.getMapChip(number);
     if (v == 0) {
       number=0;//道
     }
@@ -223,12 +259,33 @@ class Tile {
     }
     if (v == 2) {
       number=2;//壁縦
+    }    
+    if (v == 3) {
+      number = 3;//柵
+    }    
+    if (v == 4) {
+      number = 4;//縦柵
+    }   
+    if (v == 5) {
+      number = 5;//横柵
+    }
+    if (v == 15) {
+      number = 15;//ブロック
+    }
+    if (v == 16) {
+      number = 16;//カギドア
     }
     if (v == 20) {
       number=20;//草1
     }
     if (v == 22) {
       number=22;//階段
+    }
+    if (v == 23) {
+      number = 23;//ポイント
+    }
+    if (v == 24) {
+      number = 24;//鍵
     }
     image(mapChip, x, y, w, h);
   }

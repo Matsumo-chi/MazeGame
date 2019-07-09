@@ -1,10 +1,15 @@
+import ddf.minim.*;//サウンドAPI　ミニム //<>//
+Minim minim;
+AudioSample mizu;
+AudioSample get;
+
 Chara chara;
 Tile[] tiles =  new Tile[0];
 MapChip mp1;
 boolean showOneTime;
 int number;
-int point=0;
-int Key=0;
+int point = 0;
+boolean Key = false;
 
 class MapChip {
   //集合画像本体
@@ -36,9 +41,19 @@ class MapChip {
 
 // マップ元データ
 /*
-0=道
- 1=壁
- 2=
+ 0=道
+ 1=壁横
+ 2=壁縦
+ 3=柵
+ 4=縦柵
+ 5=横柵
+ 15=ブロック
+ 16=鍵ドア
+ 20=草1
+ 20=草2
+ 22=階段
+ 23=ポイント
+ 24=鍵
  */
 int[][] mymap = {
 
@@ -62,8 +77,13 @@ final int Chip_h = 64;
 void setup() {
   size(960, 640);
   smooth();
-  mp1=new MapChip("chipmap.png");
   number=1;
+  
+  minim = new Minim(this);//サウンドの読み込み
+  mizu = minim.loadSample("water-drop3.mp3", 2048);
+  get = minim.loadSample("touch1.mp3", 2048);
+  mp1=new MapChip("chipmap.png");
+  
   // 10*10のグリッドを作る
   for (int i = 0; i <= 9; i++) {
     for (int j = 0; j <= 9; j++) {
@@ -72,12 +92,13 @@ void setup() {
     }
   }
 
-  // Create car object
+  // キャラクターを生成
   chara = new Chara(64, 64, 64, 64, 64);
 }
 
 void draw() {
   background(#038ABF);
+  Get();
   //デバック用 
   if (!showOneTime) { //最初3秒間全体画像を表示
     image(mp1.mapChipArray, 0, 0);
@@ -92,9 +113,8 @@ void draw() {
     tiles[i].display();
   }
 
-  // Display car
+  //chara表示
   chara.display(); 
-
   //デバック用
   fill(0);
   rect(700, 40, 140, 150);
@@ -104,10 +124,11 @@ void draw() {
   image(mapChip, 740, 80, 64, 64);//表示
   println(point);
   println(Key);
+  println(mymap[8][8]);
 }
 
 void keyPressed() {
-
+  mizu.trigger(); 
   if (keyCode == UP) { 
     chara.move("up");
   }
@@ -121,7 +142,6 @@ void keyPressed() {
     chara.move("right");
   }
 
-
   //デバック用
   if (key == '-') {//-キーで前のマップチップ
     if (--number<0) {
@@ -132,6 +152,14 @@ void keyPressed() {
       number=0;
     }
   }
+}
+
+void stop() {
+  mizu.close();
+  get.close();
+  //  snare.close();
+  minim.stop();
+  super.stop();
 }
 
 class Chara {
@@ -148,14 +176,14 @@ class Chara {
   //charaの表示
   void display() {
     PImage mapChip = mp1.getMapChip(number);
-    number=30;//チップのキャラ番号 //<>//
+    number = 30;//チップのキャラ番号
     image(mapChip, x, y, w, h);
     number++; 
     // ループ処理
     if (number == 33) {
       number = 30;
     }
-   image(mapChip, x, y, w, h);
+    image(mapChip, x, y, w, h);
   }
 
   void move(String direction) {
@@ -173,7 +201,10 @@ class Chara {
               break;
             } else if (tiles[i-10].v == 24) {
               chara.y = chara.y - s;
-              Key = 1;
+              Key = true;
+              if (Key == true) {
+                get.trigger();
+              }
               break;
             }
           }
@@ -191,7 +222,10 @@ class Chara {
               break;
             } else if (tiles[i+10].v == 24) {
               chara.y = chara.y + s;
-              Key = 1;
+              Key = true;
+              if (Key == true) {
+                get.trigger();
+              }
               break;
             }
           }
@@ -203,13 +237,16 @@ class Chara {
             if (tiles[i-1].v == 0 || tiles[i-1].v == 20) {
               chara.x = chara.x - s;
               break;
-            } else if (tiles[i-10].v == 23) {
+            } else if (tiles[i-1].v == 23) {
               chara.x = chara.x - s;
               point = 1;
               break;
-            } else if (tiles[i-10].v == 24) {
+            } else if (tiles[i-1].v == 24) {
               chara.x = chara.y - s;
-              Key = 1;
+              Key = true;
+              if (Key == true) {
+                get.trigger();
+              }
               break;
             }
           }
@@ -221,13 +258,16 @@ class Chara {
             if (tiles[i+1].v == 0 || tiles[i+1].v == 20) {
               chara.x = chara.x + s;
               break;
-            } else if (tiles[i+10].v == 23) {
+            } else if (tiles[i+1].v == 23) {
               chara.x = chara.x + s;
               point = 1;
               break;
-            } else if (tiles[i+10].v == 24) {
+            } else if (tiles[i+1].v == 24) {
               chara.x = chara.x + s;
-              Key = 1;
+              Key = true;
+              if (Key == true) {
+                get.trigger();
+              }
               break;
             }
           }
@@ -237,6 +277,11 @@ class Chara {
   }
 }
 
+void Get() {
+  if(Key == true){
+    mymap[8][8] = 0;
+  }
+}
 
 class Tile {
   float x, y, w, h, v;
@@ -290,3 +335,10 @@ class Tile {
     image(mapChip, x, y, w, h);
   }
 }
+
+
+/*
+ http://code.compartmental.net/minim/
+ https://soundeffect-lab.info/
+ http://rina.jpn.ph/~rance/directx7/directx7study/ddraw/p151.html
+ */

@@ -1,7 +1,10 @@
-import ddf.minim.*;//サウンドAPI　ミニム //<>//
+import ddf.minim.*;//サウンドAPI　ミニム  //<>//
 Minim minim;
+AudioPlayer player;
 AudioSample mizu;
 AudioSample get;
+AudioSample get1;
+AudioSample unlock;
 
 Chara chara;
 Tile[] tiles =  new Tile[0];
@@ -78,12 +81,16 @@ void setup() {
   size(960, 640);
   smooth();
   number=1;
-  
+
   minim = new Minim(this);//サウンドの読み込み
+  player = minim.loadFile("bath1.mp3");  
+  player.play();  //再生
   mizu = minim.loadSample("water-drop3.mp3", 2048);
   get = minim.loadSample("touch1.mp3", 2048);
+  get1 = minim.loadSample("decision1.mp3", 2048);
+  unlock = minim.loadSample("decision22.mp3", 2048);
   mp1=new MapChip("chipmap.png");
-  
+
   // 10*10のグリッドを作る
   for (int i = 0; i <= 9; i++) {
     for (int j = 0; j <= 9; j++) {
@@ -155,8 +162,11 @@ void keyPressed() {
 }
 
 void stop() {
+  player.close();
   mizu.close();
   get.close();
+  get1.close();
+  unlock.close();
   //  snare.close();
   minim.stop();
   super.stop();
@@ -197,13 +207,20 @@ class Chara {
               break;
             } else if (tiles[i-10].v == 23) {
               chara.y = chara.y - s;
+              get.trigger();
               point = 1;
               break;
             } else if (tiles[i-10].v == 24) {
               chara.y = chara.y - s;
               Key = true;
               if (Key == true) {
-                get.trigger();
+                get1.trigger();
+              }
+              break;
+            } else if (tiles[i-10].v == 16) {
+              if (Key == true) {
+                chara.y = chara.y - s;
+                unlock.trigger();
               }
               break;
             }
@@ -218,13 +235,20 @@ class Chara {
               break;
             } else if (tiles[i+10].v == 23) {
               chara.y = chara.y + s;
+              get.trigger();
               point = 1;
               break;
             } else if (tiles[i+10].v == 24) {
               chara.y = chara.y + s;
               Key = true;
               if (Key == true) {
-                get.trigger();
+                get1.trigger();
+              }
+              break;
+            } else if (tiles[i+10].v == 16) {
+              if (Key == true) {
+              chara.y = chara.y + s;
+              unlock.trigger();
               }
               break;
             }
@@ -239,13 +263,20 @@ class Chara {
               break;
             } else if (tiles[i-1].v == 23) {
               chara.x = chara.x - s;
+              get.trigger();
               point = 1;
               break;
             } else if (tiles[i-1].v == 24) {
               chara.x = chara.y - s;
               Key = true;
               if (Key == true) {
-                get.trigger();
+                get1.trigger();
+              }
+              break;
+            } else if (tiles[i-1].v == 16) {
+              if (Key == true) {
+              chara.x = chara.y - s;
+              unlock.trigger();
               }
               break;
             }
@@ -260,13 +291,20 @@ class Chara {
               break;
             } else if (tiles[i+1].v == 23) {
               chara.x = chara.x + s;
+              get.trigger();
               point = 1;
               break;
             } else if (tiles[i+1].v == 24) {
               chara.x = chara.x + s;
               Key = true;
               if (Key == true) {
-                get.trigger();
+                get1.trigger();
+              }
+              break;
+            } else if (tiles[i+1].v == 16) {
+              if (Key == true) {
+              chara.x = chara.y + s;
+              unlock.trigger();
               }
               break;
             }
@@ -278,7 +316,7 @@ class Chara {
 }
 
 void Get() {
-  if(Key == true){
+  if (Key == true) {
     mymap[8][8] = 0;
   }
 }
@@ -341,4 +379,4 @@ class Tile {
  http://code.compartmental.net/minim/
  https://soundeffect-lab.info/
  http://rina.jpn.ph/~rance/directx7/directx7study/ddraw/p151.html
- */
+*/

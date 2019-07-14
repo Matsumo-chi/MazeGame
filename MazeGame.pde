@@ -6,6 +6,12 @@ AudioSample get;
 AudioSample get1;
 AudioSample unlock;
 
+import controlP5.*;
+ControlP5 cp5;
+int bulecolor;
+color C1;
+boolean buttonClicked = false;
+
 int gseq;//ゲームの流れ
 int mcnt;//メッセージ用カウンター
 
@@ -50,7 +56,34 @@ void setup() {
   size(960, 640);
   smooth();
   number = 1;
+  cp5 = new ControlP5(this);
+  C1 = bulecolor = color(#D7EAF2);
   gameInit();
+
+  cp5.addButton("alone")
+    .setLabel("play alone")//テキスト
+    .setPosition(275, 450)
+    .setSize(100, 40)
+    .setColorActive(#0377BF) //押したときの色 引数はintとかcolorとか
+    .setColorBackground(#0377BF) //通常時の色
+    .setColorForeground(#85BFF2) //hoverしたときの色
+    .setColorCaptionLabel(bulecolor); //テキストの色
+  cp5.addButton("everyone")
+    .setLabel("play with everyone")
+    .setPosition(425, 450)
+    .setSize(100, 40)
+    .setColorActive(#0367BF)
+    .setColorBackground(#0377BF)
+    .setColorForeground(#85BFF2)
+    .setColorCaptionLabel(bulecolor);
+  cp5.addButton("hoge1")
+    .setLabel("hoge")
+    .setPosition(575, 450)
+    .setSize(100, 40)
+    .setColorActive(#0367BF)
+    .setColorBackground(#0377BF)
+    .setColorForeground(#85BFF2) 
+    .setColorCaptionLabel(bulecolor); 
 
   minim = new Minim(this);//サウンドの読み込み
   player = minim.loadFile("bath1.mp3");  
@@ -80,11 +113,14 @@ void draw() {
   } else if (gseq == 1) {//ステージ１
     gamePlay();
   } else if (gseq == 2) {//ステージ２
-  
   } else if (gseq == 3) {//ステージ３
-  
   } else {
     gameOver();
+  }
+  if (buttonClicked) {
+    println("removing all buttons");
+    removeAllButtonsAndDrawImage();
+    buttonClicked = false;
   }
 }
 void gameInit() {
@@ -93,14 +129,22 @@ void gameInit() {
 
 void gameTitle() {
   // gseq = 1;//デバックそのままゲームプレイへ
-  mcnt++;
-  if ((mcnt > 60)&&((mcnt%60) < 40)) {
-    textSize(30);
-    fill(40, 255, 40);
-    text("Push any key!", 150, 300);
-  }
+  PImage title = loadImage("title.png");
+  image(title, 0, 0);
+  noStroke();
+  rect(275, 450, 100, 40);
+  rect(425, 450, 100, 40);
+  rect(575, 450, 100, 40);
 }
 
+void alone() {
+  gseq = 1;
+  buttonClicked = true;
+}
+void removeAllButtonsAndDrawImage() {
+    background(#038ABF);
+
+}
 void gamePlay() {
   Get(); 
 
@@ -138,14 +182,6 @@ void gameOver() {
 
 void keyPressed() {
   mizu.trigger(); 
-  if (gseq ==4) {//ゲームオーバー中
-    gseq = 0 ;
-    mcnt = 0;
-  }
-  if ((gseq == 0)&&(mcnt > 60)) {//タイトル
-    gseq = 1;//ゲーム開始
-    mcnt = 0 ;
-  }
 
   if (keyCode == UP) { 
     chara.move("up");

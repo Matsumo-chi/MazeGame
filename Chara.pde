@@ -31,22 +31,28 @@ class Chara {
             if (tiles[i-10].v == 0 || tiles[i-10].v == 20) {
               chara.y = chara.y - s;
               break;
-            } else if (tiles[i-10].v == 23) {
+            } else if (tiles[i-10].v == 16) {//鍵ドア
+              if (Key == true) {
+                chara.y = chara.y - s;
+                unlock.trigger();
+              }
+              break;
+            } else if (tiles[i-10].v == 22) {//階段次のステージへ
+              chara.y = chara.y - s;
+              unlock.trigger();
+              gseq = 2;
+              reset();
+              break;
+            } else if (tiles[i-10].v == 23) {//ポイント
               chara.y = chara.y - s;
               get.trigger();
               point = 1;
               break;
-            } else if (tiles[i-10].v == 24) {
+            } else if (tiles[i-10].v == 24) {//鍵
               chara.y = chara.y - s;
               Key = true;
               if (Key == true) {
                 get1.trigger();
-              }
-              break;
-            } else if (tiles[i-10].v == 16) {
-              if (Key == true) {
-                chara.y = chara.y - s;
-                unlock.trigger();
               }
               break;
             }
@@ -58,6 +64,20 @@ class Chara {
           if ((chara.x == tiles[i].x) && (chara.y == tiles[i].y)) {
             if (tiles[i + 10].v == 0 || tiles[i+10].v == 20) {
               chara.y = chara.y + s;
+              break;
+            } else if (tiles[i+10].v == 16) {
+              if (Key == true) {
+                chara.y = chara.y + s;
+                unlock.trigger();
+              }
+              break;
+            } else if (tiles[i+10].v == 22) {
+              if (Key == true) {
+                chara.y = chara.y + s;
+                unlock.trigger();
+                gseq = 2;
+                reset();
+              }
               break;
             } else if (tiles[i+10].v == 23) {
               chara.y = chara.y + s;
@@ -71,12 +91,6 @@ class Chara {
                 get1.trigger();
               }
               break;
-            } else if (tiles[i+10].v == 16) {
-              if (Key == true) {
-              chara.y = chara.y + s;
-              unlock.trigger();
-              }
-              break;
             }
           }
         }
@@ -86,6 +100,18 @@ class Chara {
           if ((chara.x == tiles[i].x) && (chara.y == tiles[i].y)) {
             if (tiles[i-1].v == 0 || tiles[i-1].v == 20) {
               chara.x = chara.x - s;
+              break;
+            } else if (tiles[i-1].v == 16) {
+              if (Key == true) {
+                chara.x = chara.y - s;
+                unlock.trigger();
+              }
+              break;
+            } else if (tiles[i-1].v == 22) {
+              chara.x = chara.y - s;
+              unlock.trigger();
+              gseq = 2;
+              reset();
               break;
             } else if (tiles[i-1].v == 23) {
               chara.x = chara.x - s;
@@ -99,12 +125,6 @@ class Chara {
                 get1.trigger();
               }
               break;
-            } else if (tiles[i-1].v == 16) {
-              if (Key == true) {
-              chara.x = chara.y - s;
-              unlock.trigger();
-              }
-              break;
             }
           }
         }
@@ -114,6 +134,18 @@ class Chara {
           if ((chara.x == tiles[i].x) && (chara.y == tiles[i].y)) {
             if (tiles[i+1].v == 0 || tiles[i+1].v == 20) {
               chara.x = chara.x + s;
+              break;
+            } else if (tiles[i+1].v == 16) {
+              if (Key == true) {
+                chara.x = chara.y + s;
+                unlock.trigger();
+              }
+              break;
+            } else if (tiles[i+1].v == 22) {
+              chara.x = chara.y + s;
+              unlock.trigger();
+              gseq = 2;
+              reset();
               break;
             } else if (tiles[i+1].v == 23) {
               chara.x = chara.x + s;
@@ -125,12 +157,6 @@ class Chara {
               Key = true;
               if (Key == true) {
                 get1.trigger();
-              }
-              break;
-            } else if (tiles[i+1].v == 16) {
-              if (Key == true) {
-              chara.x = chara.y + s;
-              unlock.trigger();
               }
               break;
             }

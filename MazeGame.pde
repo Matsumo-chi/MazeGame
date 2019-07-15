@@ -111,8 +111,9 @@ void draw() {
   if (gseq == 0) {
     gameTitle();
   } else if (gseq == 1) {//ステージ１
-    gamePlay();
+    gamePlay0();
   } else if (gseq == 2) {//ステージ２
+    gamePlay1();
   } else if (gseq == 3) {//ステージ３
   } else {
     gameOver();
@@ -138,6 +139,7 @@ void gameTitle() {
 }
 
 void alone() {
+  text("stage1", 730, 500);
   gseq = 1;
   buttonClicked = true;
 }
@@ -145,7 +147,7 @@ void removeAllButtonsAndDrawImage() {
     background(#038ABF);
 
 }
-void gamePlay() {
+void gamePlay0() {
   Get(); 
 
   // グリッドを並べる
@@ -166,6 +168,20 @@ void gamePlay() {
   println(point);
   println(Key);
   println(mymap[8][8]);
+}
+
+void gamePlay1() {
+  
+  text("stage2", 730, 500);
+ // chara = new Chara(64, 64, 64, 64, 64);
+  Get(); 
+
+  // グリッドを並べる
+  for (int i = 0; i < tiles.length; i++) {
+    tiles[i].display();
+  }
+  //chara表示
+  chara.display(); 
 }
 
 void gameOver() {
@@ -222,6 +238,10 @@ void Get() {
   if (Key == true) {
     mymap[8][8] = 0;
   }
+}
+void reset(){
+  Key = false;
+  point = 0;
 }
 
 /*

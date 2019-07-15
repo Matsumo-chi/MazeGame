@@ -6,85 +6,26 @@ AudioSample get;
 AudioSample get1;
 AudioSample unlock;
 
-import controlP5.*;
-ControlP5 cp5;
-int bulecolor;
-color C1;
-boolean buttonClicked = false;
-
 int gseq;//ゲームの流れ
 int mcnt;//メッセージ用カウンター
 
 Chara chara;
-Tile[] tiles =  new Tile[0];
+Tile1[] tiles1 =  new Tile1[0];
+Tile2[] tiles2 =  new Tile2[0];
 MapChip mp1;
 int number;
 int point = 0;
 boolean Key = false;
 
-class MapChip {
-  //集合画像本体
-  PImage mapChipArray;
-  //マップチップの総数、並びの幅、縦の数
-  int mCount, mWidth, mHeight;
-
-  //コンストラクタには集合画像のファイル名を与える
-  MapChip(String file) {
-    mapChipArray=loadImage(file);
-    mWidth=mapChipArray.width/Chip_w; //画像に含まれるマップチップの横並び数 
-    mHeight=mapChipArray.height/Chip_h; //マップチップの縦の数 
-    mCount=mWidth * mHeight; //画像に含まれるマップチップの総数
-  }    
-  //「番号」を与えて画像を得る
-  //マップチップ総数を超えたらnullになる
-  PImage getMapChip(int number) {
-    if (number>=mCount) {
-      return null;
-    }
-    //「番号」から画像の位置を求める
-    int w=(number % mHeight)*Chip_w;
-    int h=(number / mWidth)*Chip_h;
-    return mapChipArray.get( w, h, Chip_w, Chip_h);//PImage::get()で画像を切り出す
-  }
-}
-
-//チップサイズ
-final int Chip_w = 64;
+final int Chip_w = 64;//チップサイズ
 final int Chip_h = 64;
 
 void setup() {
   size(960, 640);
   smooth();
   number = 1;
-  cp5 = new ControlP5(this);
-  C1 = bulecolor = color(#D7EAF2);
+
   gameInit();
-
-  cp5.addButton("alone")
-    .setLabel("play alone")//テキスト
-    .setPosition(275, 450)
-    .setSize(100, 40)
-    .setColorActive(#0377BF) //押したときの色 引数はintとかcolorとか
-    .setColorBackground(#0377BF) //通常時の色
-    .setColorForeground(#85BFF2) //hoverしたときの色
-    .setColorCaptionLabel(bulecolor); //テキストの色
-  cp5.addButton("everyone")
-    .setLabel("play with everyone")
-    .setPosition(425, 450)
-    .setSize(100, 40)
-    .setColorActive(#0367BF)
-    .setColorBackground(#0377BF)
-    .setColorForeground(#85BFF2)
-    .setColorCaptionLabel(bulecolor);
-  cp5.addButton("hoge1")
-    .setLabel("hoge")
-    .setPosition(575, 450)
-    .setSize(100, 40)
-    .setColorActive(#0367BF)
-    .setColorBackground(#0377BF)
-    .setColorForeground(#85BFF2) 
-    .setColorCaptionLabel(bulecolor); 
-
   minim = new Minim(this);//サウンドの読み込み
   player = minim.loadFile("bath1.mp3");  
   player.play();  //再生
@@ -92,36 +33,27 @@ void setup() {
   get = minim.loadSample("touch1.mp3", 2048);
   get1 = minim.loadSample("decision1.mp3", 2048);
   unlock = minim.loadSample("decision22.mp3", 2048);
-  mp1=new MapChip("chipmap.png");
-
-  // 10*10のグリッドを作る
-  for (int i = 0; i <= 9; i++) {
-    for (int j = 0; j <= 9; j++) {
-      Tile a = new Tile(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap[i][j]);
-      tiles = (Tile[]) append(tiles, a);//配列の末尾に追加  append(配列名, 要素);
-    }
-  }
+  mp1=new MapChip("chipmap.png");//マップチップの読み込み
 
   // キャラクターを生成
-  chara = new Chara(64, 64, 64, 64, 64);
+  if (gseq == 0) {
+    chara = new Chara(64, 64, 64, 64, 64);
+  } else if (gseq == 2 ) {
+    chara = new Chara(64, 64, 64, 64, 64);
+  }
 }
 
 void draw() {
-  background(#038ABF);
   if (gseq == 0) {
     gameTitle();
   } else if (gseq == 1) {//ステージ１
-    gamePlay0();
-  } else if (gseq == 2) {//ステージ２
     gamePlay1();
-  } else if (gseq == 3) {//ステージ３
+  } else if (gseq == 2) {//ステージクリア
+    stageclear();
+  } else if (gseq == 3) {//ステージ2
+    gamePlay2();
   } else {
     gameOver();
-  }
-  if (buttonClicked) {
-    println("removing all buttons");
-    removeAllButtonsAndDrawImage();
-    buttonClicked = false;
   }
 }
 void gameInit() {
@@ -129,30 +61,35 @@ void gameInit() {
 }
 
 void gameTitle() {
-  // gseq = 1;//デバックそのままゲームプレイへ
   PImage title = loadImage("title.png");
   image(title, 0, 0);
   noStroke();
+  fill(#D7EAF2);
   rect(275, 450, 100, 40);
   rect(425, 450, 100, 40);
   rect(575, 450, 100, 40);
+  fill(#0377BF);
+  text("play alone", 300, 475);//テキスト
+  text("play with everyone", 425, 475);
+  text("hoge", 610, 475);
+  //(#85BFF2) //hoverしたときの色
 }
 
-void alone() {
+
+void gamePlay1() {//ステージ1
+  background(#038ABF);
   text("stage1", 730, 500);
-  gseq = 1;
-  buttonClicked = true;
-}
-void removeAllButtonsAndDrawImage() {
-    background(#038ABF);
-
-}
-void gamePlay0() {
+  // 10*10のグリッドを作る
+  for (int i = 0; i <= 9; i++) {
+    for (int j = 0; j <= 9; j++) {
+      Tile1 a = new Tile1(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap1[i][j]);
+      tiles1 = (Tile1[]) append(tiles1, a);//配列の末尾に追加  append(配列名, 要素);
+    }
+  }
   Get(); 
-
   // グリッドを並べる
-  for (int i = 0; i < tiles.length; i++) {
-    tiles[i].display();
+  for (int i = 0; i < tiles1.length; i++) {
+    tiles1[i].display();
   }
 
   //chara表示
@@ -167,37 +104,80 @@ void gamePlay0() {
   image(mapChip, 740, 80, 64, 64);//表示
   println(point);
   println(Key);
-  println(mymap[8][8]);
+  //println(mymap[8][8]);
 }
 
-void gamePlay1() {
-  
+void gamePlay2() {//ステージ2
+  background(#038ABF);
   text("stage2", 730, 500);
- // chara = new Chara(64, 64, 64, 64, 64);
-  Get(); 
-
-  // グリッドを並べる
-  for (int i = 0; i < tiles.length; i++) {
-    tiles[i].display();
+  // 10*10のグリッドを作る
+  for (int i = 0; i <= 9; i++) {
+    for (int j = 0; j <= 9; j++) {
+      Tile2 a = new Tile2(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap2[i][j]);
+      tiles2 = (Tile2[]) append(tiles2, a);//配列の末尾に追加  append(配列名, 要素);
+    }
   }
-  //chara表示
-  chara.display(); 
+  Get(); 
+  for (int i = 0; i < tiles2.length; i++) {
+    tiles2[i].display();
+  }
+  chara.display();
+}
+
+void stageclear() {
+  background(#038ABF);
+  fill(255);
+  textSize(100);
+  text("clear!!", width/2-150, 200);
+  textSize(30);
+  text("go nextstage", width/2-100, height/2);
+  mcnt++;
+  if ((mcnt > 60)&&((mcnt%60) < 40)) {
+    fill(255);
+    text("Push any key!", width/2-100, height/2+100);
+  }
 }
 
 void gameOver() {
-  textSize(70);
+  textSize(30);
   fill(255, 0, 0);
   text("GAME OVER", 60, 240);
   mcnt++;
   if ((mcnt > 60)&&((mcnt%60) < 40)) {
-    textSize(30);
-    fill(40, 255, 40);
+    fill(255);
     text("Push any key!", 150, 320);
+  }
+}
+
+void mouseClicked() {
+  if ( mouseButton == LEFT ) {
+    if (275<= mouseX && mouseX <=375) {
+      if (450<= mouseY && mouseY <=490) {
+        gseq = 1;
+      }
+    }
+  }
+  if ( mouseButton == LEFT ) {
+    if (275<= mouseX && mouseX <=375) {
+      if (450<= mouseY && mouseY <=490) {
+        
+      }
+    }
+  }
+  if ( mouseButton == LEFT ) {
+    if (575<= mouseX && mouseX <=675) {
+      if (450<= mouseY && mouseY <=490) {
+        
+      }
+    }
   }
 }
 
 void keyPressed() {
   mizu.trigger(); 
+  if (gseq == 2) {
+    gseq = 3;
+  }
 
   if (keyCode == UP) { 
     chara.move("up");
@@ -236,10 +216,10 @@ void stop() {
 
 void Get() {
   if (Key == true) {
-    mymap[8][8] = 0;
+    //mymap[8][8] = 0;
   }
 }
-void reset(){
+void reset() {
   Key = false;
   point = 0;
 }

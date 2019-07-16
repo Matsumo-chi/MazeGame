@@ -28,7 +28,7 @@ class Chara {
     if (keyPressed) {
       // 方向
       if (direction == "up") {
-        if (gseq == 1) {
+        if (gseq == 1 || gseq == 11) {
           for (int i = 0; i < tiles1.length; i++) {
             if ((chara.x == tiles1[i].x) && (chara.y == tiles1[i].y)) {
               if (tiles1[i-10].v == 0 || tiles1[i-10].v == 20) {
@@ -62,7 +62,7 @@ class Chara {
             }
           }
         }
-        if (gseq == 2) {//おかしい
+        if (gseq == 3) {//おかしい
           for (int i = 0; i < tiles2.length; i++) {
             if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
               if (tiles2[i-10].v == 0 || tiles2[i-10].v == 20) {
@@ -98,7 +98,7 @@ class Chara {
         }
       }
       if (direction == "down") {
-        if (gseq == 1) {
+        if (gseq == 1 || gseq == 11) {
           for (int i = 0; i < tiles1.length; i++) {
             if ((chara.x == tiles1[i].x) && (chara.y == tiles1[i].y)) {
               if (tiles1[i + 10].v == 0 || tiles1[i+10].v == 20) {
@@ -134,7 +134,7 @@ class Chara {
             }
           }
         }
-        if (gseq == 2) {//おかしい
+        if (gseq == 3) {//おかしい
           for (int i = 0; i < tiles2.length; i++) {
             if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
               if (tiles2[i + 10].v == 0 || tiles2[i+10].v == 20) {
@@ -172,7 +172,7 @@ class Chara {
         }
       }
       if (direction == "left") {
-        if (gseq == 1) {
+        if (gseq == 1 || gseq == 11) {
           for (int i = 0; i < tiles1.length; i++) {
             if ((chara.x == tiles1[i].x) && (chara.y == tiles1[i].y)) {
               if (tiles1[i-1].v == 0 || tiles1[i-1].v == 20) {
@@ -206,7 +206,7 @@ class Chara {
             }
           }
         }
-        if (gseq == 2) {
+        if (gseq == 3) {
           for (int i = 0; i < tiles2.length; i++) {
             if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
               if (tiles2[i-1].v == 0 || tiles2[i-1].v == 20) {
@@ -242,7 +242,7 @@ class Chara {
         }
       }
       if (direction == "right") {//ok
-        if (gseq == 1) {
+        if (gseq == 1 || gseq == 11) {
           for (int i = 0; i < tiles1.length; i++) {
             if ((chara.x == tiles1[i].x) && (chara.y == tiles1[i].y)) {
               if (tiles1[i+1].v == 0 || tiles1[i+1].v == 20) {
@@ -277,7 +277,7 @@ class Chara {
           }
         }
       }
-      if (gseq == 2) {
+      if (gseq == 3) {
         for (int i = 0; i < tiles2.length; i++) {
           if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
             if (tiles2[i+1].v == 0 || tiles2[i+1].v == 20) {

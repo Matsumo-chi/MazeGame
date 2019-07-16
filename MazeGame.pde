@@ -21,8 +21,8 @@ final int Chip_w = 64;//チップサイズ
 final int Chip_h = 64;
 
 void setup() {
+  svr = new Server(this, 5555); // サーバを立ち上げる
   size(960, 640);
-  smooth();
   number = 1;
 
   gameInit();
@@ -34,25 +34,27 @@ void setup() {
   get1 = minim.loadSample("decision1.mp3", 2048);
   unlock = minim.loadSample("decision22.mp3", 2048);
   mp1=new MapChip("chipmap.png");//マップチップの読み込み
-
-  // キャラクターを生成
-  if (gseq == 0) {
-    chara = new Chara(64, 64, 64, 64, 64);
-  } else if (gseq == 2 ) {
-    chara = new Chara(64, 64, 64, 64, 64);
-  }
 }
 
 void draw() {
   if (gseq == 0) {
     gameTitle();
-  } else if (gseq == 1) {//ステージ１
+  } else if (gseq == 1) {//ひとりででステージ１
     gamePlay1();
-  } else if (gseq == 2) {//ステージクリア
+  } else if (gseq == 2) {//ひとりでステージクリア
     stageclear();
-  } else if (gseq == 3) {//ステージ2
+  } else if (gseq == 3) {//ひとりでステージ2
     gamePlay2();
-  } else {
+  } else if (gseq == 11) {//みんなでステージ１
+    gamePlay11();
+  } else if (gseq == 12) {//みんなでステージクリア
+    stageclear();
+  } else if (gseq == 13) {//みんなでステージ2
+  
+  } else if (gseq == 111) {//デバックモード //<>//
+    debug();
+  } 
+  else {
     gameOver();
   }
 }
@@ -71,44 +73,33 @@ void gameTitle() {
   fill(#0377BF);
   text("play alone", 300, 475);//テキスト
   text("play with everyone", 425, 475);
-  text("hoge", 610, 475);
+  text("debug", 610, 475);
   //(#85BFF2) //hoverしたときの色
 }
 
-
 void gamePlay1() {//ステージ1
-  background(#038ABF);
+  fill(#038ABF);
+  noStroke();
+  rect(0, 0, 650, 650);
   text("stage1", 730, 500);
-  // 10*10のグリッドを作る
-  for (int i = 0; i <= 9; i++) {
-    for (int j = 0; j <= 9; j++) {
-      Tile1 a = new Tile1(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap1[i][j]);
-      tiles1 = (Tile1[]) append(tiles1, a);//配列の末尾に追加  append(配列名, 要素);
-    }
-  }
   Get(); 
   // グリッドを並べる
   for (int i = 0; i < tiles1.length; i++) {
     tiles1[i].display();
   }
-
   //chara表示
   chara.display(); 
-
-  //デバック用
-  fill(0);
-  rect(700, 40, 140, 150);
-  fill(255);
-  text("MapChip: "+number+" / "+mp1.mCount, 730, 70);
-  PImage mapChip = mp1.getMapChip(number);  
-  image(mapChip, 740, 80, 64, 64);//表示
   println(point);
   println(Key);
   //println(mymap[8][8]);
+  fill(255);//あとで色変える
+  commentGet();
 }
 
 void gamePlay2() {//ステージ2
-  background(#038ABF);
+  fill(#038ABF);
+  noStroke();
+  rect(0, 0, 650, 650);
   text("stage2", 730, 500);
   // 10*10のグリッドを作る
   for (int i = 0; i <= 9; i++) {
@@ -122,6 +113,20 @@ void gamePlay2() {//ステージ2
     tiles2[i].display();
   }
   chara.display();
+  commentGet();
+}
+
+void gamePlay11() {//ステージ1
+  fill(#038ABF);
+  noStroke();
+  rect(0, 0, 650, 650);
+  text("stage1", 730, 500);
+  Get(); 
+  for (int i = 0; i < tiles1.length; i++) {
+    tiles1[i].display();
+  }
+  chara.display(); 
+  commentGet();
 }
 
 void stageclear() {
@@ -149,25 +154,62 @@ void gameOver() {
   }
 }
 
+void debug(){
+  fill(0);
+  rect(700, 40, 140, 150);
+  fill(255);
+  text("MapChip: "+number+" / "+mp1.mCount, 730, 70);
+  PImage mapChip = mp1.getMapChip(number);  
+  image(mapChip, 740, 80, 64, 64);
+}
+
 void mouseClicked() {
   if ( mouseButton == LEFT ) {
     if (275<= mouseX && mouseX <=375) {
       if (450<= mouseY && mouseY <=490) {
+        background(#038ABF);
+        // 10*10のグリッドを作る
+        for (int i = 0; i <= 9; i++) {
+          for (int j = 0; j <= 9; j++) {
+            Tile1 a = new Tile1(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap1[i][j]);
+            tiles1 = (Tile1[]) append(tiles1, a);//配列の末尾に追加  append(配列名, 要素);
+          }
+        }
         gseq = 1;
+        chara = new Chara(64, 64, 64, 64, 64);
+        strokeWeight(8);
+        stroke(#D7EAF2);
+        noFill();
+        strokeJoin(ROUND);
+        rect(700, 50, 200, 500);
       }
     }
   }
   if ( mouseButton == LEFT ) {
-    if (275<= mouseX && mouseX <=375) {
+    if (425<= mouseX && mouseX <=575) {
       if (450<= mouseY && mouseY <=490) {
-        
+        for (int i = 0; i <= 9; i++) {
+          for (int j = 0; j <= 9; j++) {
+            Tile1 a = new Tile1(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap1[i][j]);
+            tiles1 = (Tile1[]) append(tiles1, a);
+          }
+        }
+        background(#038ABF);
+        gseq = 11;
+        chara = new Chara(64, 64, 64, 64, 64);
+        strokeWeight(8);
+        stroke(#D7EAF2);
+        noFill();
+        strokeJoin(ROUND);
+        rect(700, 50, 200, 500);
       }
     }
   }
   if ( mouseButton == LEFT ) {
     if (575<= mouseX && mouseX <=675) {
       if (450<= mouseY && mouseY <=490) {
-        
+        background(#038ABF);
+        gseq = 111;
       }
     }
   }
@@ -177,6 +219,8 @@ void keyPressed() {
   mizu.trigger(); 
   if (gseq == 2) {
     gseq = 3;
+  } else if (keyCode == ENTER && gseq == 111) {
+    gseq = 0;
   }
 
   if (keyCode == UP) { 
@@ -192,7 +236,7 @@ void keyPressed() {
     chara.move("right");
   }
 
-  //デバック用
+  //デバックモード用
   if (key == '-') {//-キーで前のマップチップ
     if (--number < 0) {
       number=mp1.mCount-1;

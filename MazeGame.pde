@@ -33,7 +33,7 @@ void setup() {
   get = minim.loadSample("touch1.mp3", 2048);
   get1 = minim.loadSample("decision1.mp3", 2048);
   unlock = minim.loadSample("decision22.mp3", 2048);
-  mp1=new MapChip("chipmap.png");//マップチップの読み込み
+  mp1=new MapChip("mapchip.png");//マップチップの読み込み
 }
 
 void draw() {

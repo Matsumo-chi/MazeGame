@@ -1,14 +1,15 @@
-import ddf.minim.*;//サウンドAPI　ミニム  //<>//
+import ddf.minim.*;//サウンドAPI　ミニム //<>//
 Minim minim;
 AudioPlayer player;
 AudioSample mizu;
 AudioSample get;
 AudioSample get1;
 AudioSample unlock;
-
+PFont font; //フォント
 int gseq;//ゲームの流れ
 int mcnt;//メッセージ用カウンター
-
+int numBubbles = 50;
+Bubble[] bubbles;
 Chara chara;
 Tile1[] tiles1 =  new Tile1[0];
 Tile2[] tiles2 =  new Tile2[0];
@@ -24,7 +25,8 @@ void setup() {
   svr = new Server(this, 5555); // サーバを立ち上げる
   size(960, 640);
   number = 1;
-
+  font = loadFont("NuAnkoMochi-Square-1-48.vlw"); 
+  textFont(font, 32); 
   gameInit();
   minim = new Minim(this);//サウンドの読み込み
   player = minim.loadFile("bath1.mp3");  
@@ -34,27 +36,25 @@ void setup() {
   get1 = minim.loadSample("decision1.mp3", 2048);
   unlock = minim.loadSample("decision22.mp3", 2048);
   mp1=new MapChip("mapchip.png");//マップチップの読み込み
+  bubbles = new Bubble[numBubbles];
+  for (int i = 0; i < numBubbles; i++) {
+    bubbles[i] = new Bubble();
+  }
 }
 
 void draw() {
+  smooth();
   if (gseq == 0) {
     gameTitle();
-  } else if (gseq == 1) {//ひとりででステージ１
+  } else if (gseq == 1) {//でステージ１
     gamePlay1();
-  } else if (gseq == 2) {//ひとりでステージクリア
+  } else if (gseq == 2) {//ステージクリア
     stageclear();
-  } else if (gseq == 3) {//ひとりでステージ2
+  } else if (gseq == 3) {//ステージ2
     gamePlay2();
-  } else if (gseq == 11) {//みんなでステージ１
-    gamePlay11();
-  } else if (gseq == 12) {//みんなでステージクリア
-    stageclear();
-  } else if (gseq == 13) {//みんなでステージ2
-  
-  } else if (gseq == 111) {//デバックモード //<>//
+  } else if (gseq == 111) {//デバックモード
     debug();
-  } 
-  else {
+  } else {
     gameOver();
   }
 }
@@ -65,16 +65,21 @@ void gameInit() {
 void gameTitle() {
   PImage title = loadImage("title.png");
   image(title, 0, 0);
+  for (int i = 0; i < bubbles.length; i++) {
+    bubbles[i].update();
+    bubbles[i].render();
+    if ( bubbles[i].loc.y < -50) {
+      bubbles[i].reset();
+    }
+  }
   noStroke();
   fill(#D7EAF2);
-  rect(275, 450, 100, 40);
-  rect(425, 450, 100, 40);
-  rect(575, 450, 100, 40);
+  rect( 286, 425, 162, 40);
+  rect( 512, 425, 162, 40);
   fill(#0377BF);
-  text("play alone", 300, 475);//テキスト
-  text("play with everyone", 425, 475);
-  text("debug", 610, 475);
-  //(#85BFF2) //hoverしたときの色
+  textSize(30);
+  text("play", 330, 450);
+  text("debug", 540, 450);
 }
 
 void gamePlay1() {//ステージ1
@@ -89,10 +94,10 @@ void gamePlay1() {//ステージ1
   }
   //chara表示
   chara.display(); 
-  println(point);
-  println(Key);
+  //println(point);
+  //println(Key);
   //println(mymap[8][8]);
-  fill(255);//あとで色変える
+  fill(#D7EAF2);
   commentGet();
 }
 
@@ -101,6 +106,7 @@ void gamePlay2() {//ステージ2
   noStroke();
   rect(0, 0, 650, 650);
   text("stage2", 730, 500);
+  chara.update();
   // 10*10のグリッドを作る
   for (int i = 0; i <= 9; i++) {
     for (int j = 0; j <= 9; j++) {
@@ -116,19 +122,6 @@ void gamePlay2() {//ステージ2
   commentGet();
 }
 
-void gamePlay11() {//ステージ1
-  fill(#038ABF);
-  noStroke();
-  rect(0, 0, 650, 650);
-  text("stage1", 730, 500);
-  Get(); 
-  for (int i = 0; i < tiles1.length; i++) {
-    tiles1[i].display();
-  }
-  chara.display(); 
-  commentGet();
-}
-
 void stageclear() {
   background(#038ABF);
   fill(255);
@@ -140,6 +133,14 @@ void stageclear() {
   if ((mcnt > 60)&&((mcnt%60) < 40)) {
     fill(255);
     text("Push any key!", width/2-100, height/2+100);
+  }
+  strokeWeight(1);
+  for (int i = 0; i < bubbles.length; i++) {
+    bubbles[i].update();
+    bubbles[i].render();
+    if ( bubbles[i].loc.y < -50) {
+      bubbles[i].reset();
+    }
   }
 }
 
@@ -154,60 +155,41 @@ void gameOver() {
   }
 }
 
-void debug(){
+void debug() {
+  background(#038ABF);
   fill(0);
-  rect(700, 40, 140, 150);
+  rect(650, 40, 250, 150);
   fill(255);
-  text("MapChip: "+number+" / "+mp1.mCount, 730, 70);
+  textSize(20);
+  text("MapChip: "+number+" / "+mp1.mCount, 680, 70);
   PImage mapChip = mp1.getMapChip(number);  
   image(mapChip, 740, 80, 64, 64);
 }
 
+void stage1_start() {
+  background(#038ABF);
+  // 10*10のグリッドを作る
+  for (int i = 0; i <= 9; i++) {
+    for (int j = 0; j <= 9; j++) {
+      Tile1 a = new Tile1(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap1[i][j]);
+      tiles1 = (Tile1[]) append(tiles1, a);//配列の末尾に追加  append(配列名, 要素);
+    }
+  }
+  chara = new Chara(64*1, 64*5, 64, 64, 64);
+}
+
 void mouseClicked() {
   if ( mouseButton == LEFT ) {
-    if (275<= mouseX && mouseX <=375) {
-      if (450<= mouseY && mouseY <=490) {
-        background(#038ABF);
-        // 10*10のグリッドを作る
-        for (int i = 0; i <= 9; i++) {
-          for (int j = 0; j <= 9; j++) {
-            Tile1 a = new Tile1(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap1[i][j]);
-            tiles1 = (Tile1[]) append(tiles1, a);//配列の末尾に追加  append(配列名, 要素);
-          }
-        }
+    if (286 <= mouseX && mouseX <= 488) {
+      if (425 <= mouseY && mouseY <= 465) {
+        stage1_start();
         gseq = 1;
-        chara = new Chara(64, 64, 64, 64, 64);
-        strokeWeight(8);
-        stroke(#D7EAF2);
-        noFill();
-        strokeJoin(ROUND);
-        rect(700, 50, 200, 500);
       }
     }
   }
   if ( mouseButton == LEFT ) {
-    if (425<= mouseX && mouseX <=575) {
-      if (450<= mouseY && mouseY <=490) {
-        for (int i = 0; i <= 9; i++) {
-          for (int j = 0; j <= 9; j++) {
-            Tile1 a = new Tile1(j*Chip_w, i*Chip_h, Chip_w, Chip_h, mymap1[i][j]);
-            tiles1 = (Tile1[]) append(tiles1, a);
-          }
-        }
-        background(#038ABF);
-        gseq = 11;
-        chara = new Chara(64, 64, 64, 64, 64);
-        strokeWeight(8);
-        stroke(#D7EAF2);
-        noFill();
-        strokeJoin(ROUND);
-        rect(700, 50, 200, 500);
-      }
-    }
-  }
-  if ( mouseButton == LEFT ) {
-    if (575<= mouseX && mouseX <=675) {
-      if (450<= mouseY && mouseY <=490) {
+    if (512 <= mouseX && mouseX <= 674) {
+      if (425 <= mouseY && mouseY <= 465) {
         background(#038ABF);
         gseq = 111;
       }
@@ -218,6 +200,8 @@ void mouseClicked() {
 void keyPressed() {
   mizu.trigger(); 
   if (gseq == 2) {
+    fill(#038ABF);
+    rect(640, 0, 960, 960);
     gseq = 3;
   } else if (keyCode == ENTER && gseq == 111) {
     gseq = 0;

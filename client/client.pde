@@ -1,39 +1,42 @@
 //client
 import processing.net.*;
 Client c;
-Line line;
+Message message;
+PFont font; //フォント
 
 void setup() {
   size(500, 720);
-  background(114,146,193);
-  line = new Line();
-  //line.show("元気？",true);
-  c = new Client(this, /*"172.20.35.100"*/"127.0.0.1",5555);//ここのアドレス変える！
+  background(#038ABF);
+  message = new Message();
+  font = loadFont("NuAnkoMochi-Square-1-48.vlw"); 
+  textFont(font, 16); 
+  message.show("チャットからキャラを動かそう", true);
+  c = new Client(this, /*"172.20.35.100"*//*"127.0.0.1"*/"192.168.11.4", 5555);//ここのアドレス変える！
 }
 
 int y = 20;
 void draw() {
   if (c.available() > 0) {
     String s = c.readString();
-  line.show(s,false);
+    message.show(s, false);
     y += 20;
   }
 }
 
 void mouseClicked() {
- String msg = readString();
- c.write("松本千里＞" +  msg);
- line.show(msg,true);
+  String msg = readString();
+  c.write(msg);
+  message.show(msg, true);
 }
 
-class Line { // 吹き出しを表示するクラス
+class Message { // 吹き出しを表示するクラス
   int x, y = 10; // 最初に表示する場所
   final int fontH = 15; // 文字の幅(適当)
-    void show(String msg, boolean jibun) { // メッセージ表示メソッド
+  void show(String msg, boolean jibun) { // メッセージ表示メソッド
     int w = msg.length() * fontH; // 文字列の長さを計算
     if (jibun) { // 自分のメッセージか?
       x = width / 2; // 適当に右にする
-      fill(133, 226, 73); // Lineの緑
+      fill(#D7EAF2);
     } else { // 他の人のメッセージ
       x = 20;
       fill(255); // 白
@@ -45,9 +48,8 @@ class Line { // 吹き出しを表示するクラス
     text(msg, x + fontH/2, y + fontH);
     y += fontH + 10; // 下にずらす
     if (y > height) { // 一番したまで来たのでクリアする
-      background (114, 146, 193);
-      y = 10; 
-      ; // 最初に戻す。スクロールするのは課題とする
+      background (#038ABF);
+      y = 10;
     }
   }
 } 

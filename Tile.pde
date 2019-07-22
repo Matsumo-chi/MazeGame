@@ -38,6 +38,9 @@ class Tile1 {
     if (v == 20) {
       number=20;//草1
     }
+    if (v == 21) {
+      number=21;//草1
+    }
     if (v == 22) {
       number=22;//階段
     }

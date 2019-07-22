@@ -21,7 +21,6 @@ class Chara {
      number = 30;
      }
      */
-    image(mapChip, x, y, w, h);
   }
 
   void update() {
@@ -30,10 +29,8 @@ class Chara {
   }
 
   void move(String direction) {
-
-    // 方向
     if (direction == "up") {
-      if (gseq == 1 ) {
+      if (gsec == 1 ) {
         for (int i = 0; i < tiles1.length; i++) {
           if ((chara.x == tiles1[i].x) && (chara.y == tiles1[i].y)) {
             if (tiles1[i-10].v == 0 || tiles1[i-10].v == 20) {
@@ -48,7 +45,7 @@ class Chara {
             } else if (tiles1[i-10].v == 22) {//階段次のステージへ
               chara.y = chara.y - s;
               unlock.trigger();
-              gseq = 2;
+              gsec = 2;
               reset();
               break;
             } else if (tiles1[i-10].v == 23) {//ポイント
@@ -67,11 +64,7 @@ class Chara {
           }
         }
       }
-
-
-
-
-      if (gseq == 3) {//おかしい
+      if (gsec == 3 ) {
         for (int i = 0; i < tiles2.length; i++) {
           if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
             if (tiles2[i-10].v == 0 || tiles2[i-10].v == 20) {
@@ -86,7 +79,7 @@ class Chara {
             } else if (tiles2[i-10].v == 22) {//階段次のステージへ
               chara.y = chara.y - s;
               unlock.trigger();
-              gseq = 4;
+              gsec = 4;
               reset();
               break;
             } else if (tiles2[i-10].v == 23) {//ポイント
@@ -107,7 +100,7 @@ class Chara {
       }
     }
     if (direction == "down") {
-      if (gseq == 1 ) {
+      if (gsec == 1 ) {
         for (int i = 0; i < tiles1.length; i++) {
           if ((chara.x == tiles1[i].x) && (chara.y == tiles1[i].y)) {
             if (tiles1[i + 10].v == 0 || tiles1[i+10].v == 20) {
@@ -123,7 +116,7 @@ class Chara {
               if (Key == true) {
                 chara.y = chara.y + s;
                 unlock.trigger();
-                gseq = 2;
+                gsec = 2;
                 reset();
               }
               break;
@@ -143,7 +136,7 @@ class Chara {
           }
         }
       }
-      if (gseq == 3) {//おかしい
+      if (gsec == 3 ) {
         for (int i = 0; i < tiles2.length; i++) {
           if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
             if (tiles2[i + 10].v == 0 || tiles2[i+10].v == 20) {
@@ -159,7 +152,7 @@ class Chara {
               if (Key == true) {
                 chara.y = chara.y + s;
                 unlock.trigger();
-                gseq = 4;
+                gsec = 4;
                 reset();
               }
               break;
@@ -181,7 +174,7 @@ class Chara {
       }
     }
     if (direction == "left") {
-      if (gseq == 1 || gseq == 11) {
+      if (gsec == 1 ) {
         for (int i = 0; i < tiles1.length; i++) {
           if ((chara.x == tiles1[i].x) && (chara.y == tiles1[i].y)) {
             if (tiles1[i-1].v == 0 || tiles1[i-1].v == 20) {
@@ -196,7 +189,7 @@ class Chara {
             } else if (tiles1[i-1].v == 22) {
               chara.x = chara.y - s;
               unlock.trigger();
-              gseq = 2;
+              gsec = 2;
               reset();
               break;
             } else if (tiles1[i-1].v == 23) {
@@ -215,7 +208,7 @@ class Chara {
           }
         }
       }
-      if (gseq == 3) {
+      if (gsec == 3 ) {
         for (int i = 0; i < tiles2.length; i++) {
           if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
             if (tiles2[i-1].v == 0 || tiles2[i-1].v == 20) {
@@ -230,7 +223,7 @@ class Chara {
             } else if (tiles2[i-1].v == 22) {
               chara.x = chara.y - s;
               unlock.trigger();
-              gseq = 3;
+              gsec = 4;
               reset();
               break;
             } else if (tiles2[i-1].v == 23) {
@@ -250,8 +243,8 @@ class Chara {
         }
       }
     }
-    if (direction == "right") {//ok
-      if (gseq == 1 ) {
+    if (direction == "right") {
+      if (gsec == 1 ) {
         for (int i = 0; i < tiles1.length; i++) {
           if ((chara.x == tiles1[i].x) && (chara.y == tiles1[i].y)) {
             if (tiles1[i+1].v == 0 || tiles1[i+1].v == 20) {
@@ -266,7 +259,7 @@ class Chara {
             } else if (tiles1[i+1].v == 22) {
               chara.x = chara.y + s;
               unlock.trigger();
-              gseq = 2;
+              gsec = 2;
               reset();
               break;
             } else if (tiles1[i+1].v == 23) {
@@ -285,39 +278,37 @@ class Chara {
           }
         }
       }
-    }
-
-
-    if (gseq == 3) {
-      for (int i = 0; i < tiles2.length; i++) {
-        if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
-          if (tiles2[i+1].v == 0 || tiles2[i+1].v == 20) {
-            chara.x = chara.x + s;
-            break;
-          } else if (tiles2[i+1].v == 16) {
-            if (Key == true) {
+      if (gsec == 3 ) {
+        for (int i = 0; i < tiles2.length; i++) {
+          if ((chara.x == tiles2[i].x) && (chara.y == tiles2[i].y)) {
+            if (tiles2[i+1].v == 0 || tiles2[i+1].v == 20) {
+              chara.x = chara.x + s;
+              break;
+            } else if (tiles2[i+1].v == 16) {
+              if (Key == true) {
+                chara.x = chara.y + s;
+                unlock.trigger();
+              }
+              break;
+            } else if (tiles2[i+1].v == 22) {
               chara.x = chara.y + s;
               unlock.trigger();
+              gsec = 4;
+              reset();
+              break;
+            } else if (tiles2[i+1].v == 23) {
+              chara.x = chara.x + s;
+              get.trigger();
+              point = 1;
+              break;
+            } else if (tiles2[i+1].v == 24) {
+              chara.x = chara.x + s;
+              Key = true;
+              if (Key == true) {
+                get1.trigger();
+              }
+              break;
             }
-            break;
-          } else if (tiles2[i+1].v == 22) {
-            chara.x = chara.y + s;
-            unlock.trigger();
-            gseq = 4;
-            reset();
-            break;
-          } else if (tiles2[i+1].v == 23) {
-            chara.x = chara.x + s;
-            get.trigger();
-            point = 1;
-            break;
-          } else if (tiles2[i+1].v == 24) {
-            chara.x = chara.x + s;
-            Key = true;
-            if (Key == true) {
-              get1.trigger();
-            }
-            break;
           }
         }
       }

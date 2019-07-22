@@ -29,6 +29,7 @@ class Chara {
   }
 
   void move(String direction) {
+    mizu.trigger(); 
     if (direction == "up") {
       if (gsec == 1 ) {
         for (int i = 0; i < tiles1.length; i++) {

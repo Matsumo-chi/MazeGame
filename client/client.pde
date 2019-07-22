@@ -11,7 +11,7 @@ void setup() {
   font = loadFont("NuAnkoMochi-Square-1-48.vlw"); 
   textFont(font, 16); 
   message.show("チャットからキャラを動かそう", true);
-  c = new Client(this, /*"172.20.35.145""192.168.11.4"*/"127.20.35.100",5555 );//ここのアドレス変える！
+  c = new Client(this, /*"172.20.35.145"*/"192.168.11.4",5555 );//ここのアドレス変える！
 }
 
 int y = 20;

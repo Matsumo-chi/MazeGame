@@ -248,7 +248,6 @@ void mouseClicked() {
   }
 }
 void keyPressed() {
-  mizu.trigger(); 
   if (gsec == 2) {
     fill(#038ABF);
     rect(640, 0, 960, 960);
